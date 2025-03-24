@@ -1,0 +1,1 @@
+ghc -v -o roomAssign RoomAssignTool.hs

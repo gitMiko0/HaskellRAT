@@ -15,11 +15,11 @@ isValidAssignment group room =
   (not (projectorNeed group) || projector room) &&
   (not (computerNeed group) || computer room) &&
   (maybe True (== floorLevel room) (floorPreference group)) &&
-  all (noTimeConflict (startTime group, endTime group)) (schedule room)
+  all (checkTimeOverlap (startTime group, endTime group)) (schedule room)
 
 -- Check if a new booking overlaps with existing ones
-noTimeConflict :: (UTCTime, UTCTime) -> (UTCTime, UTCTime, String) -> Bool
-noTimeConflict (newStart, newEnd) (existingStart, existingEnd, _) =
+checkTimeOverlap :: (UTCTime, UTCTime) -> (UTCTime, UTCTime, String) -> Bool
+checkTimeOverlap (newStart, newEnd) (existingStart, existingEnd, _) =
   newEnd <= existingStart || newStart >= existingEnd
 
 -- Assign groups to rooms using backtracking
