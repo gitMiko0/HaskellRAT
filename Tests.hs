@@ -3,7 +3,7 @@ import Data.Time
 import Solver (assignGroups, isValidAssignment, checkFloorPreference, checkRoomCapacity,
                checkWheelchairAccess, checkEquipment, checkTimeOverlap, preprocessData)
 
--- Sample Group and Room Data Using Your Structure
+-- Simplified Initialization
 group :: String -> String -> Int -> Bool -> Bool -> Bool -> Int -> String -> String -> Group
 group start end size wheelchair projector computer floor dateStr groupId =
     let date = parseDate dateStr

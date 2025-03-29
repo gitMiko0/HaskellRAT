@@ -9,6 +9,13 @@ import Data.Maybe (fromMaybe)
 import Data.Time (UTCTime, parseTimeM, defaultTimeLocale)
 import Text.Read (readMaybe)  -- Import readMaybe
 
+-- General function to load and parse a CSV file
+loadCSV :: (String -> a) -> FilePath -> IO [a]
+loadCSV parseFunc file = do
+  contents <- readFile file
+  let lineList = drop 1 (lines contents)  -- Skip the header
+  return $ map parseFunc lineList
+
 -- Helper function to parse a line from CSV
 parseCSVLine :: String -> [String]
 parseCSVLine = splitOn ","
@@ -23,13 +30,6 @@ parseBool _   = False
 parseDateTime :: String -> Maybe UTCTime
 parseDateTime dateStr =
   parseTimeM True defaultTimeLocale "%Y-%m-%d %H:%M" (trim dateStr)
-
--- Load room data from a CSV file
-loadRooms :: FilePath -> IO [Room]
-loadRooms file = do
-  contents <- readFile file
-  let (header:lineList) = tail (lines contents)  -- Skip the header
-  return $ map parseRoom lineList
 
 parseRoom :: String -> Room
 parseRoom line =
@@ -49,13 +49,6 @@ trim :: String -> String
 trim = f . f
    where f = reverse . dropWhile (== ' ')
 
--- Load group data from a CSV file
-loadGroups :: FilePath -> IO [Group]
-loadGroups file = do
-  contents <- readFile file
-  let (header:lineList) = tail (lines contents)  -- Skip the header
-  return $ map parseGroup lineList
-
 parseGroup :: String -> Group
 parseGroup line =
   let [gid, size, wca, proj, comp, floor, start, end] = parseCSVLine line
@@ -64,10 +57,10 @@ parseGroup line =
       startTime = parseDateTime trimmedStart
       endTime = parseDateTime trimmedEnd
   in case (startTime, endTime) of
-      (Just s, Just e) -> Group gid
+      (Just start, Just end) -> Group gid
                             (read size)
-                            s
-                            e
+                            start
+                            end
                             (parseBool proj)
                             (parseBool comp)
                             (parseBool wca)
