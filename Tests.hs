@@ -1,7 +1,11 @@
 import Test.HUnit
 import Data.Time
-import Solver (assignGroups, isValidAssignment, checkFloorPreference, checkRoomCapacity,
-               checkWheelchairAccess, checkEquipment, checkTimeOverlap, preprocessData)
+import InputReader
+import Solver
+import OutputWriter
+import System.Environment (getArgs)
+import Room
+import Group
 
 -- Simplified Initialization
 group :: String -> String -> Int -> Bool -> Bool -> Bool -> Int -> String -> String -> Group
@@ -9,7 +13,10 @@ group start end size wheelchair projector computer floor dateStr groupId =
     let date = parseDate dateStr
         startTime = parseTimeOfDay start
         endTime = parseTimeOfDay end
-    in Group groupId (dateTime date startTime) (dateTime date endTime) size wheelchair projector computer floor
+        floorPref = if floor == -1 then Nothing else Just floor  -- Convert to Maybe Int
+    in Group groupId size (dateTime date startTime) (dateTime date endTime) projector computer wheelchair floorPref
+
+
 
 room :: String -> Int -> Bool -> Bool -> Bool -> Int -> Room
 room roomId capacity wheelchair projector computer floor =
