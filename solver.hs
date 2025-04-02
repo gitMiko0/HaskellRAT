@@ -6,9 +6,8 @@ module Solver (
     checkEquipment, 
     checkTimeOverlap, 
     assignRooms,
-    replaceRoom,
+    replaceRoom
 ) where
-
 
 import Room
 import Group
@@ -19,22 +18,22 @@ type Solution = [(String, String, UTCTime, UTCTime)]  -- (GroupID, RoomID, Start
 
 -- Individual constraint checks
 checkRoomCapacity :: Group -> Room -> Bool
-checkRoomCapacity group room = capacity room >= size group
+checkRoomCapacity group room = getCapacity room >= getSize group
 
 checkWheelchairAccess :: Group -> Room -> Bool
-checkWheelchairAccess group room = not (wheelchairNeed group) || wheelchairAccess room
+checkWheelchairAccess group room = not (needsWheelchair group) || hasWheelchairAccess room
 
 checkEquipment :: Group -> Room -> Bool
 checkEquipment group room =
-  (not (projectorNeed group) || projector room) &&
-  (not (computerNeed group) || computer room)
+  (not (needsProjector group) || hasProjector room) &&
+  (not (needsComputer group) || hasComputer room)
 
 checkFloorPreference :: Group -> Room -> Bool
-checkFloorPreference group room = maybe True (== floorLevel room) (floorPreference group)
+checkFloorPreference group room = maybe True (== getFloorLevel room) (getFloorPreference group)
 
 checkScheduleConflict :: Group -> Room -> Bool
 checkScheduleConflict group room =
-  all (checkTimeOverlap (startTime group, endTime group)) (schedule room)
+  all (checkTimeOverlap (getStartTime group, getEndTime group)) (getSchedule room)
 
 -- Check if a new booking overlaps with existing ones
 checkTimeOverlap :: (UTCTime, UTCTime) -> (UTCTime, UTCTime, String) -> Bool
@@ -50,17 +49,16 @@ isValidAssignment group room =
   checkFloorPreference group room &&
   checkScheduleConflict group room
 
-
 -- Assign groups to rooms using backtracking
 assignRooms :: [Group] -> [Room] -> [Solution]
 assignRooms [] _ = [[]]  -- Base case: all groups assigned
 assignRooms (g:gs) rooms =
-  [ (groupID g, roomID r, startTime g, endTime g) : sol
+  [ (getGroupID g, getRoomID r, getStartTime g, getEndTime g) : sol
   | r <- rooms, isValidAssignment g r
-  , let updatedRoom = r { schedule = (startTime g, endTime g, groupID g) : schedule r }
+  , let updatedRoom = addSchedule r (getStartTime g, getEndTime g, getGroupID g)
   , sol <- assignRooms gs (replaceRoom updatedRoom rooms)
   ]
 
 -- Replace a room in the list after updating its schedule
 replaceRoom :: Room -> [Room] -> [Room]
-replaceRoom updated = map (\r -> if roomID r == roomID updated then updated else r)
+replaceRoom updated = map (\r -> if getRoomID r == getRoomID updated then updated else r)
