@@ -1,19 +1,29 @@
-module OutputWriter where
+module OutputWriter (
+  formatSolution,
+  writeCSV
+) where
 
 import Data.Time (UTCTime, formatTime, defaultTimeLocale)
-import Solver
 import System.IO
+import Solver (Solution)
 
-type Solution = [(String, String, UTCTime, UTCTime)]  -- (GroupID, RoomID, Start, End)
-
--- Convert a solution into a readable format
+-- | Converts a list of assignments (Solution) into a human-readable multiline string.
+--   Format: "GroupID -> RoomID : YYYY-MM-DD HH:MM - YYYY-MM-DD HH:MM"
 formatSolution :: Solution -> String
-formatSolution = unlines . map (\(group, room, start, end) -> group ++ " -> " ++ room ++ " : " ++ show start ++ " - " ++ show end)
+formatSolution = unlines . map formatLine
+  where
+    fmt t = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" t
+    formatLine (group, room, start, end) =
+      group ++ " -> " ++ room ++ " : " ++ fmt start ++ " - " ++ fmt end
 
--- Write assignments to a CSV file
+-- | Writes a solution to a CSV file.
+--   Format per line: GroupID,RoomID,StartTime,EndTime
 writeCSV :: FilePath -> Solution -> IO ()
 writeCSV file solution = do
-  writeFile file (unlines (map formatCSVLine solution))
+  writeFile file (unlines (map formatAsCSV solution))
 
-formatCSVLine :: (String, String, UTCTime, UTCTime) -> String
-formatCSVLine (group, room, start, end) = group ++ "," ++ room ++ "," ++ show start ++ "," ++ show end
+-- | Formats a single assignment as a CSV line.
+formatAsCSV :: (String, String, UTCTime, UTCTime) -> String
+formatAsCSV (group, room, start, end) =
+  let fmt = formatTime defaultTimeLocale "%Y-%m-%d %H:%M"
+  in group ++ "," ++ room ++ "," ++ fmt start ++ "," ++ fmt end
