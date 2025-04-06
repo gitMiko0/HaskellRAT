@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>{- 
+<span class="lineno">    2 </span>Module Name: Solver.hs
+<span class="lineno">    3 </span>Project Name: Room Assignment Tool (Functional/Haskell Solution)
+<span class="lineno">    4 </span>File Purpose: Implements the recursive backtracking algorithm that assigns groups to rooms
+<span class="lineno">    5 </span>based on pre-defined constraints such as schedule availability and room features.
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>Module Summary:
+<span class="lineno">    8 </span>This module defines the `Solution` type and provides the core logic to assign
+<span class="lineno">    9 </span>groups to rooms while ensuring all constraints are satisfied.
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>Key Functions:
+<span class="lineno">   12 </span>- `assignRooms`
+<span class="lineno">   13 </span>- `replaceRoom`
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>Dependencies:
+<span class="lineno">   16 </span>- Room.hs
+<span class="lineno">   17 </span>- Group.hs
+<span class="lineno">   18 </span>- Constraints.hs
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>Known/Suspected Errors:
+<span class="lineno">   21 </span>- None currently known
+<span class="lineno">   22 </span>-}
+<span class="lineno">   23 </span>
+<span class="lineno">   24 </span>module Solver (
+<span class="lineno">   25 </span>  Solution,
+<span class="lineno">   26 </span>  assignRooms,
+<span class="lineno">   27 </span>  replaceRoom
+<span class="lineno">   28 </span>) where
+<span class="lineno">   29 </span>
+<span class="lineno">   30 </span>import Room
+<span class="lineno">   31 </span>import Group
+<span class="lineno">   32 </span>import Constraints
+<span class="lineno">   33 </span>import Data.Time (UTCTime, NominalDiffTime)
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>-- | A Solution is a list of successful group-room-time assignments
+<span class="lineno">   36 </span>type Solution = [(String, String, UTCTime, UTCTime)]
+<span class="lineno">   37 </span>
+<span class="lineno">   38 </span>-- | Recursively assigns each group to a valid room using backtracking, returning the first valid solution found.
+<span class="lineno">   39 </span>assignRooms :: [Group] -&gt; [Room] -&gt; NominalDiffTime -&gt; Maybe Solution
+<span class="lineno">   40 </span><span class="decl"><span class="istickedoff">assignRooms [] _ _ = Just []  -- Base case: all groups assigned</span>
+<span class="lineno">   41 </span><span class="spaces"></span><span class="istickedoff">assignRooms (g:gs) rooms timeGap = tryRooms rooms</span>
+<span class="lineno">   42 </span><span class="spaces">  </span><span class="istickedoff">where</span>
+<span class="lineno">   43 </span><span class="spaces">    </span><span class="istickedoff">tryRooms [] = Nothing</span>
+<span class="lineno">   44 </span><span class="spaces">    </span><span class="istickedoff">tryRooms (r:rs)</span>
+<span class="lineno">   45 </span><span class="spaces">      </span><span class="istickedoff">| isValidAssignment g r timeGap =</span>
+<span class="lineno">   46 </span><span class="spaces">          </span><span class="istickedoff">let updatedRoom = addSchedule r (getStartTime g, getEndTime g, <span class="nottickedoff">getGroupID g</span>)</span>
+<span class="lineno">   47 </span><span class="spaces">              </span><span class="istickedoff">updatedRooms = replaceRoom updatedRoom rooms</span>
+<span class="lineno">   48 </span><span class="spaces">          </span><span class="istickedoff">in case assignRooms gs updatedRooms timeGap of</span>
+<span class="lineno">   49 </span><span class="spaces">               </span><span class="istickedoff">Just sol -&gt; Just (<span class="nottickedoff">(getGroupID g, getRoomID r, getStartTime g, getEndTime g)</span> : sol)</span>
+<span class="lineno">   50 </span><span class="spaces">               </span><span class="istickedoff">Nothing  -&gt; <span class="nottickedoff">tryRooms rs</span> -- Path fails, backtrack</span>
+<span class="lineno">   51 </span><span class="spaces">      </span><span class="istickedoff">| <span class="tickonlytrue">otherwise</span> = tryRooms rs</span></span>
+<span class="lineno">   52 </span>
+<span class="lineno">   53 </span>-- | Replaces a room in the list with an updated version by matching RoomID
+<span class="lineno">   54 </span>replaceRoom :: Room -&gt; [Room] -&gt; [Room]
+<span class="lineno">   55 </span><span class="decl"><span class="istickedoff">replaceRoom updated = map (\r -&gt; if getRoomID r == getRoomID updated then updated else r)</span></span>
+
+</pre>
+</body>
+</html>

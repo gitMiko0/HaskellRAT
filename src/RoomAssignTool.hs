@@ -22,7 +22,7 @@ Notes:
 -}
 
 import InputReader (loadCSV, parseRoom, parseGroup, runWithGap)
-import Solver (assignRooms)
+import Solver (assignGroups)
 import OutputWriter (formatSolution, writeCSV)
 import System.Environment (getArgs)
 import Data.Time (NominalDiffTime)

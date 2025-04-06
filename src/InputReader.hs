@@ -31,7 +31,7 @@ module InputReader (
 import Room
 import Group
 import OutputWriter (writeCSV, formatSolution)
-import Solver (assignRooms)
+import Solver (assignGroups)
 import Data.Time
 import System.IO
 import Data.Char (toUpper)
@@ -203,7 +203,7 @@ runWithGap :: FilePath -> FilePath -> NominalDiffTime -> IO ()
 runWithGap roomsFile groupsFile gap = do
   rooms <- loadCSV parseRoom roomsFile
   groups <- loadCSV parseGroup groupsFile
-  case assignRooms groups rooms gap of
+  case assignGroups groups rooms gap of
     Just sol -> do
       putStrLn "Room Assignments:"
       putStrLn (formatSolution sol)

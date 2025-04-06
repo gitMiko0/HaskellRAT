@@ -23,7 +23,7 @@ Known/Suspected Errors:
 
 module Solver (
   Solution,
-  assignRooms,
+  assignGroups,
   replaceRoom
 ) where
 
@@ -35,20 +35,22 @@ import Data.Time (UTCTime, NominalDiffTime)
 -- | A Solution is a list of successful group-room-time assignments
 type Solution = [(String, String, UTCTime, UTCTime)]
 
--- | Recursively assigns each group to a valid room using backtracking, returning the first valid solution found.
-assignRooms :: [Group] -> [Room] -> NominalDiffTime -> Maybe Solution
-assignRooms [] _ _ = Just []  -- Base case: all groups assigned
-assignRooms (g:gs) rooms timeGap = tryRooms rooms
+-- | Assigns groups to rooms using backtracking.
+--   Returns updated list of rooms with scheduled bookings.
+assignGroups :: [Group] -> [Room] -> NominalDiffTime -> Maybe Solution
+assignGroups [] _ _ = Just []
+assignGroups (g:gs) rooms timeGap = tryRooms rooms
   where
     tryRooms [] = Nothing
     tryRooms (r:rs)
       | isValidAssignment g r timeGap =
           let updatedRoom = addSchedule r (getStartTime g, getEndTime g, getGroupID g)
               updatedRooms = replaceRoom updatedRoom rooms
-          in case assignRooms gs updatedRooms timeGap of
+          in case assignGroups gs updatedRooms timeGap of
                Just sol -> Just ((getGroupID g, getRoomID r, getStartTime g, getEndTime g) : sol)
-               Nothing  -> tryRooms rs -- Path fails, backtrack
+               Nothing  -> tryRooms rs
       | otherwise = tryRooms rs
+
 
 -- | Replaces a room in the list with an updated version by matching RoomID
 replaceRoom :: Room -> [Room] -> [Room]

@@ -16,9 +16,6 @@ room :: String -> Int -> Bool -> Bool -> Bool -> Int -> Room
 room roomId capacity wheelchair projector computer floor =
     Room roomId capacity wheelchair projector computer floor []
 
-parseUTC :: String -> UTCTime
-parseUTC s = parseTimeOrError True defaultTimeLocale "%F %R" s
-
 dateTime :: Day -> TimeOfDay -> UTCTime
 dateTime date time = UTCTime date (timeOfDayToTime time)
 
