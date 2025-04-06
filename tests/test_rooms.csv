@@ -1,0 +1,3 @@
+RoomID,Capacity,WheelchairAccess,Projector,Computer,Floor
+R101,25,TRUE,FALSE,FALSE,1
+R102,30,FALSE,TRUE,TRUE,2

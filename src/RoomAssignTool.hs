@@ -21,7 +21,7 @@ Notes:
 - Only the first valid solution is displayed.
 -}
 
-import InputReader (loadCSV, parseRoom, parseGroup)
+import InputReader (loadCSV, parseRoom, parseGroup, runWithGap)
 import Solver (assignRooms)
 import OutputWriter (formatSolution, writeCSV)
 import System.Environment (getArgs)
@@ -40,15 +40,5 @@ main = do
         Nothing     -> putStrLn "Error: Gap must be an integer in minutes."
     _ -> putStrLn "Usage: room_assign_tool <rooms.csv> <groups.csv> [gap_minutes]"
 
-runWithGap :: FilePath -> FilePath -> NominalDiffTime -> IO ()
-runWithGap roomsFile groupsFile gap = do
-  rooms <- loadCSV parseRoom roomsFile
-  groups <- loadCSV parseGroup groupsFile
-  case assignRooms groups rooms gap of
-    Just sol -> do
-      putStrLn "Room Assignments:"
-      putStrLn (formatSolution sol)
-      writeCSV "assignments.csv" sol
-    Nothing -> putStrLn "Error: Constraints cannot be satisfied with the provided input."
 
 

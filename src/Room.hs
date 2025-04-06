@@ -24,7 +24,7 @@ module Room (
   Room(..),
   getRoomID, getCapacity, hasWheelchairAccess,
   hasProjector, hasComputer, getFloorLevel,
-  getSchedule, setSchedule, addSchedule
+  getSchedule, addSchedule
 ) where
 
 import Data.Time (UTCTime)
@@ -136,19 +136,6 @@ getFloorLevel = floorLevel
 -}
 getSchedule :: Room -> [(UTCTime, UTCTime, String)]
 getSchedule = schedule
-
-{- setSchedule
-   Replaces the room’s current schedule with a new one.
-
-   Parameters:
-     [(UTCTime, UTCTime, String)] - new list of bookings
-     Room - the room to update
-
-   Return Value:
-     Room - updated room with new schedule
--}
-setSchedule :: [(UTCTime, UTCTime, String)] -> Room -> Room
-setSchedule newSched room = room { schedule = newSched }
 
 {- addSchedule
    Adds a new booking to the beginning of the room’s schedule.

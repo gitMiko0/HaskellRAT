@@ -41,6 +41,29 @@ import Room
 import Group
 import Data.Time (UTCTime, NominalDiffTime, addUTCTime)
 
+
+{-|
+isValidAssignment  
+  Aggregates all constraint checks and returns True only if all are satisfied
+  for assigning a group to a room, including time conflict detection with a
+  user-defined buffer between bookings.
+
+Parameters:
+  Group             - the group being considered  
+  Room              - the room being considered  
+  NominalDiffTime   - required time gap between bookings (in seconds)
+
+Return Value:
+  Bool - True if all constraints pass
+-}
+isValidAssignment :: Group -> Room -> NominalDiffTime -> Bool
+isValidAssignment group room gap =
+  checkFloorPreference group room &&
+  checkRoomCapacity group room &&
+  checkWheelchairAccess group room &&
+  checkEquipment group room &&
+  checkScheduleConflict group room gap
+  
 {-|
 checkFloorPreference  
   Verifies whether the group's floor preference matches the room's floor level.
@@ -137,25 +160,3 @@ Return Value:
 checkTimeOverlap :: (UTCTime, UTCTime) -> (UTCTime, UTCTime, String) -> NominalDiffTime -> Bool
 checkTimeOverlap (newStart, newEnd) (existingStart, existingEnd, _) gap =
   addUTCTime gap newEnd <= existingStart || newStart >= addUTCTime gap existingEnd
-
-{-|
-isValidAssignment  
-  Aggregates all constraint checks and returns True only if all are satisfied
-  for assigning a group to a room, including time conflict detection with a
-  user-defined buffer between bookings.
-
-Parameters:
-  Group             - the group being considered  
-  Room              - the room being considered  
-  NominalDiffTime   - required time gap between bookings (in seconds)
-
-Return Value:
-  Bool - True if all constraints pass
--}
-isValidAssignment :: Group -> Room -> NominalDiffTime -> Bool
-isValidAssignment group room gap =
-  checkFloorPreference group room &&
-  checkRoomCapacity group room &&
-  checkWheelchairAccess group room &&
-  checkEquipment group room &&
-  checkScheduleConflict group room gap

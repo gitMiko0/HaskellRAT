@@ -25,8 +25,7 @@ module Group (
   Group(..),
   getGroupID, getSize, getStartTime, getEndTime,
   needsProjector, needsComputer, needsWheelchair,
-  getFloorPreference, hasFloorPreference,
-  printGroupDetails
+  getFloorPreference
 ) where
 
 import Data.Time (UTCTime)
@@ -36,8 +35,8 @@ import Data.Time (UTCTime)
 data Group = Group
   { groupID         :: String        -- ^ Unique identifier for the group
   , size            :: Int           -- ^ Number of participants in the group
-  , startTime       :: UTCTime       -- ^ Group's scheduled start time
-  , endTime         :: UTCTime       -- ^ Group's scheduled end time
+  , startTime       :: UTCTime       -- ^ Group's requested start time
+  , endTime         :: UTCTime       -- ^ Group's requested end time
   , projectorNeed   :: Bool          -- ^ True if the group needs a projector
   , computerNeed    :: Bool          -- ^ True if the group needs a computer
   , wheelchairNeed  :: Bool          -- ^ True if accessibility is required
@@ -84,27 +83,3 @@ needsWheelchair = wheelchairNeed
 -- Returns -1 if no preference is specified.
 getFloorPreference :: Group -> Int
 getFloorPreference = floorPreference
-
--- | hasFloorPreference
--- Checks if the group has a specific floor preference (not -1).
-hasFloorPreference :: Group -> Bool
-hasFloorPreference g = getFloorPreference g /= -1
-
--- | printGroupDetails
--- Prints the details of a group in a human-readable format.
--- Parameters:
---   Group - the group to display
--- Return Value:
---   IO () - printed output to standard output
-printGroupDetails :: Group -> IO ()
-printGroupDetails g =
-  putStrLn $ "Group " ++ getGroupID g ++
-    ", Size: " ++ show (getSize g) ++
-    ", Time: " ++ show (getStartTime g) ++ " - " ++ show (getEndTime g) ++
-    ", Equipment: " ++ eqStr ++
-    ", Floor Pref: " ++ if hasFloorPreference g then show (getFloorPreference g) else "None"
-  where
-    eqStr = concat $
-      [if needsProjector g then "[Projector] " else ""
-      ,if needsComputer g then "[Computer] " else ""
-      ,if needsWheelchair g then "[Wheelchair] " else ""]

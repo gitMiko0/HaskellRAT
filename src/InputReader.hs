@@ -23,7 +23,8 @@ Known/Suspected Errors:
 module InputReader (
   loadCSV,
   parseRoom,
-  parseGroup
+  parseGroup,
+  runWithGap
 ) where
 
 
@@ -197,3 +198,14 @@ Return Value:
 -}
 readOrFail :: String -> String -> Int
 readOrFail errMsg s = fromMaybe (error errMsg) (readMaybe (trim s))
+
+runWithGap :: FilePath -> FilePath -> NominalDiffTime -> IO ()
+runWithGap roomsFile groupsFile gap = do
+  rooms <- loadCSV parseRoom roomsFile
+  groups <- loadCSV parseGroup groupsFile
+  case assignRooms groups rooms gap of
+    Just sol -> do
+      putStrLn "Room Assignments:"
+      putStrLn (formatSolution sol)
+      writeCSV "assignments.csv" sol
+    Nothing -> putStrLn "Error: Constraints cannot be satisfied with the provided input."
