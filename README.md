@@ -49,3 +49,5 @@ to run the tests, input:
 ```bash
 ./black_box_tests.ps1
 ```
+
+Note: The testing also has comprehensive, implementation-based, function specific tests with HUnit along with their coverage frameworks under the tests folder. Please ignore this.
