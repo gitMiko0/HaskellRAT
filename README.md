@@ -35,6 +35,10 @@ From the terminal, run:
 ```bash
 ghc -outputdir build -o roomAssign.exe -isrc src/RoomAssignTool.hs
 ```
+Then, an executable will be created, run:
+```bash
+./roomAssign.exe <rooms_file.csv> <groups_file.csv> <optional_gap_in_minutes>
+```
 
 Note that there are also powershell scripts available.
 to build the executable, input:
