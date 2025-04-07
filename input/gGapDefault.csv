@@ -1,0 +1,3 @@
+GroupID,Size,WheelchairAccess,Projector,Computer,FloorPreference,Start,End
+G0001,40,TRUE,TRUE,FALSE,-1,2025-02-07 08:00,2025-02-07 09:00
+G0002,35,false,TRUE,FALSE,-1,2025-02-07 09:10,2025-02-07 12:00
