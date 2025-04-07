@@ -2,11 +2,11 @@
 
 This tool assigns groups into pre-existing rooms while checking for multiple constraints such as:
 
-- **Computer and projector availability**  
-- **Wheelchair accessibility**  
-- **Room capacity**  
-- **Floor preference** (`-1` to indicate no preference)  
-- **Time conflicts**, with a user-defined **time gap** (in minutes) between bookings  
+- **Computer and projector availability**    TRUE or FALSE
+- **Wheelchair accessibility**               TRUE or FALSE
+- **Room capacity**                          TRUE or FALSE
+- **Floor preference**                       (-1 to indicate no preference)
+- **Time conflicts**, with a user-defined **time gap** (in minutes) between bookings
 
 The tool ensures that no invalid assignments are made. If a solution exists that satisfies all constraints, it will find it using a backtracking algorithm.  
 Otherwise, the tool will communicate that it is not able to find a viable solution.
