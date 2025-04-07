@@ -14,7 +14,7 @@ Test Type:
 Black-box functional tests using HUnit.
 
 Dependencies:
-- Solver (assignRooms)
+- Solver (assignGroups)
 - Tests.Helpers (group, room, testGap)
 - HUnit
 - Data.Maybe
@@ -33,7 +33,7 @@ solverTests = TestList
       let g1 = group "10:00" "11:00" 5 False False False 1 "2023-01-01" "G1"
           g2 = group "11:15" "12:15" 5 False False False 1 "2023-01-01" "G2"
           r  = room "R1" 10 True True True 1
-      case assignRooms [g1, g2] [r] testGap of
+      case assignGroups [g1, g2] [r] testGap of
         Just sol -> assertEqual "Valid groups assigned to one room" 2 (length sol)
         Nothing  -> assertFailure "Expected successful assignment"
 
@@ -43,7 +43,7 @@ solverTests = TestList
           g2 = group "10:30" "11:30" 5 False False False 1 "2023-01-01" "G2"
           r1 = room "R1" 10 True True True 1
           r2 = room "R2" 10 True True True 1
-      case assignRooms [g1, g2] [r1, r2] testGap of
+      case assignGroups [g1, g2] [r1, r2] testGap of
         Just sol -> assertEqual "Backtracking assigns both groups" 2 (length sol)
         Nothing  -> assertFailure "Expected backtracking to succeed"
 
@@ -52,7 +52,7 @@ solverTests = TestList
       let g1 = group "10:00" "11:00" 30 False False False 1 "2023-01-01" "G1"
           g2 = group "11:30" "12:30" 30 False False False 1 "2023-01-01" "G2"
           r  = room "R1" 10 True True True 1
-      case assignRooms [g1, g2] [r] testGap of
+      case assignGroups [g1, g2] [r] testGap of
         Just _  -> assertFailure "Expected failure due to capacity"
         Nothing -> return ()  -- Expected
   ]
