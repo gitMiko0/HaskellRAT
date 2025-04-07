@@ -1,109 +1,0 @@
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<style type="text/css">
-span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
-span.nottickedoff { background: yellow}
-span.istickedoff { background: white }
-span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
-span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
-span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
-span.decl { font-weight: bold }
-span.spaces    { background: white }
-</style>
-</head>
-<body>
-<pre>
-<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
-</pre>
-<pre>
-<span class="lineno">    1 </span>{-
-<span class="lineno">    2 </span>Module Name: Tests.ParserTests
-<span class="lineno">    3 </span>Project Name: Room Assignment Tool (Functional/Haskell Solution)
-<span class="lineno">    4 </span>File Purpose: Unit tests for input parsing from CSV strings into Room and Group data.
-<span class="lineno">    5 </span>
-<span class="lineno">    6 </span>Module Summary:
-<span class="lineno">    7 </span>This module verifies that:
-<span class="lineno">    8 </span>- Well-formed CSV strings are correctly parsed into Room and Group records
-<span class="lineno">    9 </span>- Invalid date and integer values raise appropriate errors
-<span class="lineno">   10 </span>- Invalid boolean values are also detected and reported
-<span class="lineno">   11 </span>- The loadCSV function correctly reads and parses files into lists of data
-<span class="lineno">   12 </span>
-<span class="lineno">   13 </span>Test Type:
-<span class="lineno">   14 </span>Black-box unit tests using HUnit and exception handling via Control.Exception.
-<span class="lineno">   15 </span>
-<span class="lineno">   16 </span>Dependencies:
-<span class="lineno">   17 </span>- InputReader (for parseRoom, parseGroup, loadCSV, runWithGap)
-<span class="lineno">   18 </span>- Room and Group data types
-<span class="lineno">   19 </span>- HUnit, Control.Exception
-<span class="lineno">   20 </span>- System.IO
-<span class="lineno">   21 </span>- Data.Time.Clock
-<span class="lineno">   22 </span>- System.IO.Silently
-<span class="lineno">   23 </span>-}
-<span class="lineno">   24 </span>module Tests.ParserTests (parseTests) where
-<span class="lineno">   25 </span>
-<span class="lineno">   26 </span>import Test.HUnit
-<span class="lineno">   27 </span>import InputReader
-<span class="lineno">   28 </span>import Room
-<span class="lineno">   29 </span>import Group
-<span class="lineno">   30 </span>import Control.Exception (evaluate, ErrorCall(..), try)
-<span class="lineno">   31 </span>import Data.Time
-<span class="lineno">   32 </span>import Data.List (isInfixOf)
-<span class="lineno">   33 </span>import Data.Time.Clock (secondsToNominalDiffTime)
-<span class="lineno">   34 </span>
-<span class="lineno">   35 </span>
-<span class="lineno">   36 </span>
-<span class="lineno">   37 </span>parseTests :: Test
-<span class="lineno">   38 </span><span class="decl"><span class="istickedoff">parseTests = TestList</span>
-<span class="lineno">   39 </span><span class="spaces">  </span><span class="istickedoff">[ TestCase $ do</span>
-<span class="lineno">   40 </span><span class="spaces">      </span><span class="istickedoff">let input = &quot;R1,10,TRUE,FALSE,TRUE,2&quot;</span>
-<span class="lineno">   41 </span><span class="spaces">          </span><span class="istickedoff">r = parseRoom input</span>
-<span class="lineno">   42 </span><span class="spaces">      </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;Room ID&quot;</span> &quot;R1&quot; (getRoomID r)</span>
-<span class="lineno">   43 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   44 </span><span class="spaces">  </span><span class="istickedoff">, TestCase $ do</span>
-<span class="lineno">   45 </span><span class="spaces">      </span><span class="istickedoff">let input = &quot;G1,5,FALSE,FALSE,TRUE,1,2023-01-01 10:00,2023-01-01 11:00&quot;</span>
-<span class="lineno">   46 </span><span class="spaces">          </span><span class="istickedoff">g = parseGroup input</span>
-<span class="lineno">   47 </span><span class="spaces">      </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;Group ID&quot;</span> &quot;G1&quot; (getGroupID g)</span>
-<span class="lineno">   48 </span><span class="spaces">      </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;Start&quot;</span> (getStartTime g) (getStartTime (parseGroup input))</span>
-<span class="lineno">   49 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   50 </span><span class="spaces">  </span><span class="istickedoff">, TestCase $ do</span>
-<span class="lineno">   51 </span><span class="spaces">      </span><span class="istickedoff">result &lt;- try (evaluate (parseGroup &quot;G1,5,FALSE,FALSE,TRUE,1,invalid-date,2023-01-01 11:00&quot;)) :: IO (Either ErrorCall Group)</span>
-<span class="lineno">   52 </span><span class="spaces">      </span><span class="istickedoff">case result of</span>
-<span class="lineno">   53 </span><span class="spaces">        </span><span class="istickedoff">Left (ErrorCall msg) -&gt; assertBool <span class="nottickedoff">&quot;Invalid date error&quot;</span> (&quot;Invalid date format&quot; `isInfixOf` msg)</span>
-<span class="lineno">   54 </span><span class="spaces">        </span><span class="istickedoff">_ -&gt; <span class="nottickedoff">assertFailure &quot;Expected error on bad date&quot;</span></span>
-<span class="lineno">   55 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   56 </span><span class="spaces">  </span><span class="istickedoff">, TestCase $ do</span>
-<span class="lineno">   57 </span><span class="spaces">      </span><span class="istickedoff">result &lt;- try (evaluate (parseRoom &quot;R1,not-a-number,TRUE,TRUE,FALSE,1&quot;)) :: IO (Either ErrorCall Room)</span>
-<span class="lineno">   58 </span><span class="spaces">      </span><span class="istickedoff">case result of</span>
-<span class="lineno">   59 </span><span class="spaces">        </span><span class="istickedoff">Left (ErrorCall msg) -&gt; assertBool <span class="nottickedoff">&quot;Invalid int error&quot;</span> (&quot;Invalid capacity&quot; `isInfixOf` msg)</span>
-<span class="lineno">   60 </span><span class="spaces">        </span><span class="istickedoff">_ -&gt; <span class="nottickedoff">assertFailure &quot;Expected error on bad int&quot;</span></span>
-<span class="lineno">   61 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   62 </span><span class="spaces">  </span><span class="istickedoff">, TestCase $ do</span>
-<span class="lineno">   63 </span><span class="spaces">      </span><span class="istickedoff">result &lt;- try (evaluate (parseRoom &quot;R1,10,maybe,TRUE,FALSE,1&quot;)) :: IO (Either ErrorCall Room)</span>
-<span class="lineno">   64 </span><span class="spaces">      </span><span class="istickedoff">case result of</span>
-<span class="lineno">   65 </span><span class="spaces">        </span><span class="istickedoff">Left (ErrorCall msg) -&gt; assertBool <span class="nottickedoff">&quot;Invalid bool error&quot;</span> (&quot;Invalid boolean for WheelchairAccess&quot; `isInfixOf` msg)</span>
-<span class="lineno">   66 </span><span class="spaces">        </span><span class="istickedoff">_ -&gt; <span class="nottickedoff">assertFailure &quot;Expected error on bad boolean&quot;</span></span>
-<span class="lineno">   67 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   68 </span><span class="spaces">    </span><span class="istickedoff">-- The following tests ensure that the loading function is correctly populating the data structures</span>
-<span class="lineno">   69 </span><span class="spaces">  </span><span class="istickedoff">, TestCase $ do</span>
-<span class="lineno">   70 </span><span class="spaces">      </span><span class="istickedoff">rooms &lt;- loadCSV parseRoom &quot;Tests/test_rooms.csv&quot;</span>
-<span class="lineno">   71 </span><span class="spaces">      </span><span class="istickedoff">let expected =</span>
-<span class="lineno">   72 </span><span class="spaces">            </span><span class="istickedoff">[ Room &quot;R101&quot; 25 True False False 1 []</span>
-<span class="lineno">   73 </span><span class="spaces">            </span><span class="istickedoff">, Room &quot;R102&quot; 30 False True True 2 []</span>
-<span class="lineno">   74 </span><span class="spaces">            </span><span class="istickedoff">]</span>
-<span class="lineno">   75 </span><span class="spaces">      </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;loadCSV parses valid rooms&quot;</span> expected rooms</span>
-<span class="lineno">   76 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   77 </span><span class="spaces">  </span><span class="istickedoff">, TestCase $ do</span>
-<span class="lineno">   78 </span><span class="spaces">      </span><span class="istickedoff">groups &lt;- loadCSV parseGroup &quot;Tests/test_groups.csv&quot;</span>
-<span class="lineno">   79 </span><span class="spaces">      </span><span class="istickedoff">let expected =</span>
-<span class="lineno">   80 </span><span class="spaces">        </span><span class="istickedoff">-- using Prelude read for simplicity of testing</span>
-<span class="lineno">   81 </span><span class="spaces">            </span><span class="istickedoff">[ Group &quot;G0001&quot; 40 (read &quot;2025-02-07 08:00:00 UTC&quot;) (read &quot;2025-02-07 09:00:00 UTC&quot;) True False True (-1)</span>
-<span class="lineno">   82 </span><span class="spaces">            </span><span class="istickedoff">, Group &quot;G0002&quot; 35 (read &quot;2025-02-07 10:00:00 UTC&quot;) (read &quot;2025-02-07 11:00:00 UTC&quot;) True False False (-1)</span>
-<span class="lineno">   83 </span><span class="spaces">            </span><span class="istickedoff">]</span>
-<span class="lineno">   84 </span><span class="spaces"></span><span class="istickedoff"></span>
-<span class="lineno">   85 </span><span class="spaces">      </span><span class="istickedoff">assertEqual <span class="nottickedoff">&quot;loadCSV parses valid groups&quot;</span> expected groups</span>
-<span class="lineno">   86 </span><span class="spaces">  </span><span class="istickedoff">]</span></span>
-
-</pre>
-</body>
-</html>
