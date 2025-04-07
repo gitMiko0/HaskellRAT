@@ -33,4 +33,15 @@ Sample fields:
 From the terminal, run:
 
 ```bash
-ghc -o roomAssign Main.hs
+ghc -outputdir build -o roomAssign.exe -isrc src/RoomAssignTool.hs
+```
+
+Note that there are also powershell scripts available.
+to build the executable, input:
+```bash
+./build.ps1
+```
+to run the tests, input:
+```bash
+./black_box_tests.ps1
+```
