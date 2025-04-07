@@ -27,6 +27,8 @@ module OutputWriter (
 ) where
 
 import Data.Time (UTCTime, formatTime, defaultTimeLocale)
+import Data.List (intercalate)
+
 import System.IO
 import Solver (Solution)
 
@@ -47,21 +49,27 @@ formatSolution = unlines . map formatLine
     formatLine (group, room, start, end) =
       group ++ " -> " ++ room ++ " : " ++ fmt start ++ " - " ++ fmt end
 
-{-
+{-|
 writeCSV
-  Writes the solution to a CSV file with the format:
-  GroupID,RoomID,StartTime,EndTime
+  Writes the formatted solution as a CSV file with a header line.
 
 Parameters:
-  file :: FilePath - The output CSV file path
-  solution :: Solution - The list of assignments to export
+  FilePath - the target CSV file path
+  Solution - the list of group-room-time assignments
 
 Return Value:
-  IO () - Performs file writing as a side effect
+  IO () - performs the write side-effect
+
+Exceptions:
+  May raise I/O exceptions if the file path is invalid or unwritable.
 -}
 writeCSV :: FilePath -> Solution -> IO ()
-writeCSV file solution = do
-  writeFile file (unlines (map formatAsCSV solution))
+writeCSV path sol = writeFile path $ unlines $
+  ["GroupID,RoomID,Start,End"] ++ map toCSV sol --header
+  where
+    toCSV (gid, rid, start, end) =
+      intercalate "," [gid, rid, fmt start, fmt end]  --join separated with commas
+    fmt = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S"
 
 {-
 formatAsCSV
