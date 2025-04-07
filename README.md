@@ -24,6 +24,8 @@ Sample fields:
 - **Room file:** `RoomID,Capacity,WheelchairAccess,Projector,Computer,FloorLevel`  
 - **Group file:** `GroupID,Size,WheelchairAccess,Projector,Computer,FloorPreference,Start,End`  
 
+Sample inputs are provided in the input folder (consult groups_50.csv and/or rooms_50.csv as valid samples)
+
 3. Optional: time gap (in minutes)
 
 ---
