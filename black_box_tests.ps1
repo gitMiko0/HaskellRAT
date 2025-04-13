@@ -12,8 +12,8 @@ $tests = @(
     @{Name = "Invalid Floor Preference"; Rooms = "rooms_50.csv"; Groups = "gInvalidFloorPref.csv"},
     @{Name = "Error: Malformed Booleans"; Rooms = "rooms_50.csv"; Groups = "gInvalidConstraint.csv"},
     @{Name = "Missing Files"; Rooms = "IdontExist.csv"; Groups = "SameHereBro.csv"},
-    @{Name = "Error:Year-long Schedule"; Rooms = "rGapDefault.csv"; Groups = "gBadYear.csv"}
-    @{Name = "Error:Year-long Schedule"; Rooms = "rGapDefault.csv"; Groups = "gDupeId.csv"}
+    @{Name = "Error: Year-long Schedule"; Rooms = "rGapDefault.csv"; Groups = "gBadYear.csv"}
+    @{Name = "Error: Duplicate ID"; Rooms = "rGapDefault.csv"; Groups = "gDupeId.csv"}
 )
 
 # Run each test from the ./input/ folder and report result

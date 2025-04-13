@@ -64,12 +64,15 @@ Exceptions:
   May raise I/O exceptions if the file path is invalid or unwritable.
 -}
 writeCSV :: FilePath -> Solution -> IO ()
-writeCSV path sol = writeFile path $ unlines $
-  ["GroupID,RoomID,Start,End"] ++ map toCSV sol --header
+writeCSV path sol = do
+  writeFile path $ unlines $
+    ["GroupID,RoomID,Start,End"] ++ map toCSV sol
+  putStrLn $ "Assignments saved to " ++ path
   where
     toCSV (gid, rid, start, end) =
-      intercalate "," [gid, rid, fmt start, fmt end]  --join separated with commas
+      intercalate "," [gid, rid, fmt start, fmt end]
     fmt = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S"
+
 
 {-
 formatAsCSV
