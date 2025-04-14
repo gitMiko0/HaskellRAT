@@ -1,2 +1,3 @@
 RoomID,Capacity,WheelchairAccess,Projector,Computer,FloorLevel
 R101,70,TRUE,TRUE,TRUE,1
+R102,69,TRUE,TRUE,TRUE,1
