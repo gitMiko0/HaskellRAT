@@ -28,6 +28,8 @@ Sample inputs are provided in the input folder (consult groups_50.csv and/or roo
 
 **IDs MUST be UNIQUE**
 
+**Date & Time are in the format: YYYY-MM-DD HH:MM (In this version there MUST be trailing zeroes for HH < 12 (ie. 09, 01, etc.)**
+
 3. Optional: time gap (in minutes)
 
 ---
